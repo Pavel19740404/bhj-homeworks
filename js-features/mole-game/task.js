@@ -1,36 +1,26 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const cookie = document.getElementById('cookie');
-
-    const counter = new Counter();
-
-    cookie.addEventListener('click', () => {
-        counter.plusClick();
-    });
-});
-
-class Counter {
-    constructor() {
-        this.clicksCounter = document.getElementById('clicker__counter');
-        this.countSpeedElement = document.getElementById('clicker__avg');
-        this.clicksCount = Number(this.clicksCounter.innerText);
-        this.prevClickTime = null;
-        this.currentClickTime = null;
+(() => {
+    const inputs = document.querySelectorAll('div > .hole');
+    for (var i = 0; i < inputs.length; i++) {
+        inputs[i].addEventListener("click", myFunction);
     }
-
-    plusClick() {
-        this.currentClickTime = new Date();
-        this.clicksCount = this.clicksCount + 1;
-        this.clicksCounter.innerText = this.clicksCount;
-        this.updateClickAvg();
-        this.prevClickTime = this.currentClickTime;
-    }
-
-    updateClickAvg() {
-        if (!this.prevClickTime) {
-            return;
+    function myFunction() {
+        const dead = document.getElementById("dead");
+        const lost = document.getElementById("lost");
+        if (dead.textContent <= 8 & lost.textContent <= 3) {
+            if (this.className == "hole hole_has-mole") {
+                dead.textContent++ + 1;
+            } else {
+                lost.textContent++ + 1;
+            }
+        } else 
+        if (dead.textContent >= 8) {
+            alert('Вы выиграли');
+            dead.textContent = 0;
+            lost.textContent = 0;
+        } else if (lost.textContent >= 3){
+            alert('Вы проиграли');
+            dead.textContent = 0;
+            lost.textContent = 0;
         }
-
-        const diff = (this.currentClickTime.getTime() - this.prevClickTime.getTime()) / 1000;
-        this.countSpeedElement.innerText = (1 / diff).toFixed(2);
     }
-}
+    })();
