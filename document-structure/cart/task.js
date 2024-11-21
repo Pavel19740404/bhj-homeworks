@@ -1,67 +1,66 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const products = Array.from(document.querySelectorAll('.product'));
-    const cartProductsList = document.querySelector('.cart__products');
+let product = document.querySelectorAll('.product');
+let cart = document.querySelector('.cart__products');
 
-    products.forEach((product) => {
-        const minusQuantityBtn = product.querySelector('.product__quantity-control_dec');
-        const plusQuantityBtn = product.querySelector('.product__quantity-control_inc');
-        const addToCartButton = product.querySelector('.product__add');
-        const counter = product.querySelector('.product__quantity-value');
-        const productImage = product.querySelector('.product__image');
-        let itemInBasket = null;
-        let quantity = +counter.innerText;
-        let basketCounter = null;
-        let basketQuantity = 0;
+function addProducts(event) {
+	const element = event.target.closest('.product');
+	const elementId = element.dataset.id;
+	const img = element.querySelector('.product__image').src;
 
-        minusQuantityBtn.addEventListener('click', () => {
-            quantity = changeQuantity(counter, quantity - 1);
-        });
+	inCart = cart.querySelector(`.cart__product[data-id="${elementId}"]`);
 
-        plusQuantityBtn.addEventListener('click', () => {
-            quantity = changeQuantity(counter, quantity + 1);
-        });
+	 if(inCart) {
+	 	const count = inCart.querySelector('.cart__product-count');
+	 	const currentCount = parseInt(count.textContent);
 
-        addToCartButton.addEventListener('click', () => {
-            if (itemInBasket) {
-                basketQuantity = changeQuantity(basketCounter, quantity + basketQuantity);
-                return;
-            }
+	 	const input = element.querySelector('.product__quantity-value');
+	 	const select = parseInt(input.textContent);
 
-            itemInBasket = addNewItemInCart(product.dataset.id, productImage.src, quantity);
-            basketCounter = itemInBasket.querySelector('.cart__product-count');
-            basketQuantity = quantity;
-        });
-    });
+	 	count.textContent = currentCount + select;
+	 } else {
+	 	const productCart = document.createElement('div');
+	 	productCart.classList.add('cart__product');
+	 	productCart.dataset.id = elementId;
 
-    function isValidQuantity(quantity) {
-        return quantity >= 1;
-    }
+	 	const productImg = document.createElement('img');
+	 	productImg.classList.add('cart__product-image');
+	 	productImg.src = img;
+	 	productCart.appendChild(productImg);
 
-    function changeQuantity(counter, newQuantity) {
-        if (!isValidQuantity(newQuantity)) {
-            return 1;
-        }
-    
-        counter.innerText = newQuantity;
-    
-        return newQuantity;
-    }
-    
-    function createProductElement(id, img, count) {
-        const cartItem = document.createElement('div');
-        cartItem.classList.add('cart__product')
-        cartItem.dataset.id = id;
-        cartItem.innerHTML = `
-            <img class="cart__product-image" src="${img}" alt="">
-            <div class="cart__product-count">${count}</div>
-        `;
-    
-        return cartItem;
-    }
-    
-    function addNewItemInCart(id, img, count) {
-        const element = createProductElement(id, img, count);
-        cartProductsList.appendChild(element);
-        return element;
-    }
+	 	const countProduct = document.createElement('div');
+	 countProduct.classList.add('cart__product-count');
+
+	 const input = element.querySelector('.product__quantity-value');
+	 const select = parseInt(input.textContent);
+	 countProduct.textContent = select;
+
+	 productCart.appendChild(countProduct);
+	 cart.appendChild(productCart);
+	}
+
+}
+
+product.forEach((element) => {
+	const minus = element.querySelector('.product__quantity-control_dec');
+	const plus = element.querySelector('.product__quantity-control_inc');
+
+	minus.addEventListener('click', () => {
+		const input = element.querySelector('.product__quantity-value');
+		let quantity = parseInt(input.textContent);
+		if (quantity > 1) {
+			quantity --;
+			input.textContent= quantity;
+		}
+	});
+
+	plus.addEventListener('click', () => {
+		const input = element.querySelector('.product__quantity-value');
+		let quantity = parseInt(input.textContent);
+		quantity ++;
+		input.textContent= quantity;
+	});
+
+	const button = element.querySelector('.product__add');
+	button.addEventListener('click', addProducts);
+
+
 });
